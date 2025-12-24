@@ -25,19 +25,19 @@
            0 0 40px #39ff14;
     }
     .neon-card{
-        background-color: #111;
-        border: 1px solid #39ff14;
         border-radius: 10px;
         padding: 15px;
         margin-bottom: 15px;
-        box-shadow: 0 0 10px #39ff14;
         cursor: default;
+        transition: all 0.4s ease;
+        box-shadow: 0 0 15px rgba(255,255,255,0.1);
     }
     .btn-neon{
-        background-color: #39ff14;
-        color: #000;
+        background-color: #070707;
+        color: #f9f4f4;
         font-weight: bold;
         box-shadow: 0 0 10px #39ff14;
+        transition: all 0.3s ease;
     }
     .btn-neon:hover{
         background-color: #0f0;
@@ -92,8 +92,12 @@
             <input type="date" class="form-control" id="tanggal" required>
           </div>
           <div class="mb-2">
-            <label>𝐍𝐚𝐦𝐚 𝐀𝐬𝐚𝐥 𝐎𝐌𝐊:</label>
+            <label>𝐍𝐚𝐦𝐚:</label>
             <input type="text" class="form-control" id="namaOMK" required>
+          </div>
+          <div class="mb-2">
+            <label>𝐀𝐬𝐚𝐥 𝐎𝐌𝐊:</label>
+            <input type="text" class="form-control" id="asalOMK" required>
           </div>
           <div class="mb-2" id="alasanDiv" style="display:none;">
             <label>𝐀𝐥𝐚𝐬𝐚𝐧 𝐓𝐢𝐝𝐚𝐤 𝐇𝐚𝐝𝐢𝐫:</label>
@@ -147,23 +151,6 @@ const firebaseConfig = {
   const formModal = new bootstrap.Modal(document.getElementById('formModal'));
   const summaryModal = new bootstrap.Modal(document.getElementById('summaryModal'));
 
-  kampungs.forEach(k => {
-    const col = document.createElement('div');
-    col.className = "col-md-4 col-sm-6";
-    col.innerHTML = `
-      <div class="neon-card">
-        <h5 class="neon-text">${k}</h5>
-        <p class="clickable" onclick="showSummary('${k}')">𝐊𝐞𝐡𝐚𝐝𝐢𝐫𝐚𝐧: <span id="${k}-hadir">0</span> | 𝐓𝐢𝐝𝐚𝐤 𝐇𝐚𝐝𝐢𝐫: <span id="${k}-tidakHadir">0</span></p>
-        <p>𝐏𝐞𝐫𝐬𝐞𝐧𝐭𝐚𝐬𝐞: <span id="${k}-percent">0%</span></p>
-        <div class="d-flex justify-content-between mt-2">
-          <button class="btn btn-neon" onclick="openForm('${k}','hadir')">Hadir</button>
-          <button class="btn btn-neon" onclick="openForm('${k}','tidakHadir')">Tidak Hadir</button>
-        </div>
-      </div>
-    `;
-    kampungContainer.appendChild(col);
-  });
-
   // Form Input
   function openForm(kampung, status){
     document.getElementById('kampungName').value = kampung;
@@ -180,6 +167,7 @@ const firebaseConfig = {
     const no = document.getElementById('no').value;
     const tanggal = document.getElementById('tanggal').value;
     const nama = document.getElementById('namaOMK').value;
+    const asal = document.getElementById('asalOMK').value;
     const alasan = document.getElementById('alasanOMK').value || "";
 
     db.ref('kehadiran/'+kampung).push({no, tanggal, nama, status, alasan});
@@ -244,6 +232,28 @@ const firebaseConfig = {
   kampungs.forEach(k => {
     db.ref('kehadiran/'+k).on('value', snapshot => updateCounts(k));
   });
+const cardColors = [
+  "#1abc9c","#e67e22","#9b59b6","#f1c40f","#3498db","#e74c3c",
+  "#2ecc71","#f39c12","#8e44ad","#d35400","#2980b9","#c0392b","#16a085"
+];
+
+kampungs.forEach((k, index) => {
+  const col = document.createElement('div');
+  col.className = "col-md-4 col-sm-6";
+  const bgColor = cardColors[index % cardColors.length]; // pilih warna berbeda
+  col.innerHTML = `
+    <div class="neon-card" style="background-color: ${bgColor}; box-shadow: 0 0 15px ${bgColor};">
+      <h5 class="neon-text">${k}</h5>
+      <p class="clickable" onclick="showSummary('${k}')">𝐊𝐞𝐡𝐚𝐝𝐢𝐫𝐚𝐧: <span id="${k}-hadir">0</span> | 𝐓𝐢𝐝𝐚𝐤 𝐇𝐚𝐝𝐢𝐫: <span id="${k}-tidakHadir">0</span></p>
+      <p>𝐏𝐞𝐫𝐬𝐞𝐧𝐭𝐚𝐬𝐞: <span id="${k}-percent">0%</span></p>
+      <div class="d-flex justify-content-between mt-2">
+        <button class="btn btn-neon" onclick="openForm('${k}','hadir')">Hadir</button>
+        <button class="btn btn-neon" onclick="openForm('${k}','tidakHadir')">Tidak Hadir</button>
+      </div>
+    </div>
+  `;
+  kampungContainer.appendChild(col);
+});
 </script>
 </body>
 </html>
