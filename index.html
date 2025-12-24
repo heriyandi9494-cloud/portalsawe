@@ -51,7 +51,49 @@
         text-decoration: underline;
         cursor: pointer;
     }
+    .neon-robot{
+    font-family: 'Orbitron', sans-serif; /* font robotik futuristik */
+    color: #00ffff;
+    text-shadow:
+      0 0 5px #00ffff,
+      0 0 10px #00ffff,
+      0 0 20px #00ffff,
+      0 0 40px #00ffff;
+}
+.countdown-container {
+  background: rgba(0, 0, 0, 0.6); /* Latar semi-transparan */
+  border-radius: 15px;            /* Sudut melengkung */
+  box-shadow: 0 0 20px #0ff, 0 0 40px #0ff, 0 0 60px #0ff; /* Efek neon */
+  color: #0ff;                    /* Warna teks neon */
+}
+
+.neon-glow h1, .neon-glow h3 {
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+}
+.cards-wrapper {
+  display: flex;          /* Membuat card sejajar */
+  flex-wrap: wrap;        /* Membuat card otomatis ke baris berikutnya jika tidak muat */
+  gap: 20px;              /* Jarak antar card */
+  justify-content: center; /* Tengah wrapper */
+  background: rgba(0,0,0,0.5); /* Latar semi-transparan */
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; /* Efek neon keseluruhan */
+}
+
+.neon-card {
+  background: rgba(0,0,0,0.7);
+  color: #0ff;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+  min-width: 200px;       /* Minimal lebar card */
+}
+
 </style>
+<!-- Tambahkan font Orbitron -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="container py-4">
@@ -60,9 +102,17 @@
         <h1 class="neon-text">𝐏𝐨𝐫𝐭𝐚𝐥 𝐊𝐞𝐡𝐚𝐝𝐢𝐫𝐚𝐧 𝐍𝐚𝐭𝐚𝐥 𝐁𝐞𝐫𝐬𝐚𝐦𝐚 𝐇𝐃𝐒</h1>
         <p id="currentDate"></p>
     </div>
+    
+<div class="cards-wrapper p-4 my-4">
+  <!-- Countdown Timer -->
+  <div class="countdown-container p-4 mb-4 text-center neon-glow">
+    <h1>𝐖𝐚𝐤𝐭𝐮 𝐌𝐮𝐧𝐣𝐮 𝐀𝐜𝐚𝐫𝐚</h1>
+    <h3 id="countdown">00:00:00</h3>
+  </div>
 
-    <!-- Kotak Kampung -->
-    <div class="row" id="kampungContainer"></div>
+  <!-- Semua Card Kampung -->
+  <div class="row" id="kampungContainer"></div>
+</div>
 
     <!-- Persentase Total 13 Kampung -->
     <div class="mt-4 text-center">
@@ -254,6 +304,31 @@ kampungs.forEach((k, index) => {
   `;
   kampungContainer.appendChild(col);
 });
+
+// Set tanggal acara
+const eventDate = new Date("2025-12-28T00:00:00"); // format: YYYY-MM-DDTHH:MM:SS
+
+function updateCountdown(){
+    const now = new Date();
+    let diff = eventDate - now;
+
+    if(diff < 0){
+        document.getElementById('countdown').innerText = "Acara Dimulai!";
+        clearInterval(countdownInterval);
+        return;
+    }
+
+    const hours = Math.floor(diff / (1000*60*60));
+    const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const seconds = Math.floor((diff % (1000*60)) / 1000);
+
+    document.getElementById('countdown').innerText =
+      `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+}
+
+const countdownInterval = setInterval(updateCountdown, 1000);
+updateCountdown();
+
 </script>
 </body>
 </html>
